@@ -48,4 +48,15 @@ export class Posts {
       error: (err: HttpErrorResponse) => this.gestisciErrore(err),
     });
   }
+  invia(): void {
+    this.inizia();
+    const nuovo = { userId: 1, title: 'Primo post da Angular', body: 'Inviato con HttpClient' };
+    this.postService.addPost(nuovo).subscribe({
+      next: (risposta) => {
+        this.post.set(risposta);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => this.gestisciErrore(err),
+    });
+  }
 }
