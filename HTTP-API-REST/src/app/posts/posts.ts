@@ -8,7 +8,7 @@ import { PostService } from '../services/post-service';
   selector: 'app-posts',
   imports: [JsonPipe],
   templateUrl: './posts.html',
-  styleUrl: './posts.css'
+  styleUrl: './posts.css',
 })
 export class Posts {
   private readonly postService = inject(PostService);
@@ -21,8 +21,31 @@ export class Posts {
   caricaUno(numero: string): void {
     this.inizia();
     this.postService.getPost(Number(numero)).subscribe({
-      next: (dato) => {
+      next: (dato: Post) => {
         this.post.set(dato);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => this.gestisciErrore(err),
+    });
+  }
+
+  caricaTutti(): void {
+    this.inizia();
+    this.postService.getPosts().subscribe({
+      next: (dati: Post[]) => {
+        this.posts.set(dati);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => this.gestisciErrore(err),
+    });
+  }
+
+  invia(): void {
+    this.inizia();
+    const nuovo = { userId: 1, title: 'Primo post da Angular', body: 'Inviato con HttpClient' };
+    this.postService.addPost(nuovo).subscribe({
+      next: (risposta: Post) => {
+        this.post.set(risposta);
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => this.gestisciErrore(err),
@@ -37,26 +60,5 @@ export class Posts {
   private gestisciErrore(err: HttpErrorResponse): void {
     this.errore.set(`Errore ${err.status}: ${err.message}`);
     this.loading.set(false);
-  }
-  caricaTutti(): void {
-    this.inizia();
-    this.postService.getPosts().subscribe({
-      next: (dati) => {
-        this.posts.set(dati);
-        this.loading.set(false);
-      },
-      error: (err: HttpErrorResponse) => this.gestisciErrore(err),
-    });
-  }
-  invia(): void {
-    this.inizia();
-    const nuovo = { userId: 1, title: 'Primo post da Angular', body: 'Inviato con HttpClient' };
-    this.postService.addPost(nuovo).subscribe({
-      next: (risposta) => {
-        this.post.set(risposta);
-        this.loading.set(false);
-      },
-      error: (err: HttpErrorResponse) => this.gestisciErrore(err),
-    });
   }
 }
