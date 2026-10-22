@@ -1,1 +1,26 @@
-<p>nasa works!</p>
+<h2>NASA APOD (Astronomy Picture of the Day)</h2>
+
+@if (errore()) {
+  <div class="alert alert-danger">{{ errore() }}</div>
+}
+
+@if (loading()) {
+  <p class="text-body-secondary">Caricamento in corso dallo spazio...</p>
+}
+
+@if (apod(); as item) {
+  <div class="card mb-3">
+    @if (item.media_type === 'image') {
+      <img [src]="item.url" [alt]="item.title" class="card-img-top img-fluid">
+    }
+    <div class="card-body">
+      <h3 class="card-title">{{ item.title }}</h3>
+      <h6 class="card-subtitle mb-2 text-body-secondary">{{ item.date }}</h6>
+      <p class="card-text">{{ item.explanation }}</p>
+    </div>
+  </div>
+}
+
+<button type="button" class="btn btn-secondary" (click)="caricaApod()" [disabled]="loading()">
+  Aggiorna APOD
+</button>
